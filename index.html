@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klinik Sistem Gerak - Media Pembelajaran IPAS Kelas 6</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #00bfa5;
+            --text-color: #333;
+            --white: #ffffff;
+            --success: #66bb6a;
+            --error: #ef5350;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* --- BACKGROUND SATU LAYAR --- */
+        body {
+            margin: 0;
+            padding: 0;
+            /* Memanggil gambar background (Pastikan file bernama dokter.png) */
+            background-image: url('dokter.png'); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; 
+            
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- HEADER TRANSPARAN --- */
+        header {
+            background-color: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(5px); 
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            flex-grow: 1;
+            width: 90%;
+        }
+
+        /* --- KOTAK KONTEN (EFEK GLASSMORPHISM) --- */
+        .screen {
+            display: none;
+            background: rgba(255, 255, 255, 0.88); 
+            backdrop-filter: blur(8px); 
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+        }
+
+        .active { display: block; }
+
+        /* --- ANIMASI --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- UI Elements --- */
+        h1 { color: var(--primary); margin-top: 0; }
+        p { line-height: 1.6; font-size: 1.1rem; }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #357abd;
+        }
+
+        .btn-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin: 10px 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            border: 2px solid #e0e0e0;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-option:hover {
+            border-color: var(--primary);
+            background-color: #e3f2fd;
+        }
+
+        .patient-box {
+            background: rgba(225, 245, 254, 0.9);
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: left;
+            font-style: italic;
+        }
+
+        .feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 85%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .resep-box {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: left;
+            border: 1px dashed var(--success);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: #555;
+            background-color: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(5px);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🩺 Klinik Sistem Gerak</h1>
+    <p>Media Pembelajaran IPAS Kelas 6 - Kurikulum Merdeka</p>
+</header>
+
+<div class="container">
+    <div id="home-screen" class="screen active">
+        <h2>Halo, Dokter Cilik!</h2>
+        <p>Selamat datang di klinik virtual. Hari ini banyak pasien yang mengeluhkan gangguan pada sistem gerak mereka. Bantu mereka melakukan diagnosa yang tepat, ya!</p>
+        <button class="btn" onclick="startApp()">Mulai Periksa Pasien</button>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <h3 id="patient-title">Pasien #1</h3>
+        <div class="patient-box">
+            <p id="patient-story">"Halo Dokter..."</p>
+        </div>
+        <p><strong>Diagnosa apa yang paling tepat untuk pasien ini?</strong></p>
+        <div id="options-container">
+            </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <h2>Luar Biasa, Dokter!</h2>
+        <p>Semua pasien telah berhasil diperiksa. Kamu telah membantu mereka memahami kesehatan tulang dan otot.</p>
+        <div id="score-display"></div>
+        <button class="btn" onclick="location.reload()">Periksa Pasien Lagi</button>
+    </div>
+</div>
+
+<div id="feedback-modal" class="feedback-modal">
+    <div class="modal-content">
+        
+        <img id="feedback-animation" src="dokter-jempol.gif" alt="Hebat!" style="display:none; max-width: 130px; margin-bottom: 10px; animation: popIn 0.5s ease;">
+        
+        <h2 id="feedback-title">Benar!</h2>
+        <p id="feedback-message"></p>
+        <div id="resep-container" class="resep-box">
+            <strong>📋 Resep Dokter:</strong>
+            <p id="feedback-resep"></p>
+        </div>
+        <button class="btn" onclick="nextQuestion()">Lanjut ke Pasien Berikutnya</button>
+    </div>
+</div>
+
+<footer>
+    Aplikasi Dikembangkan oleh <strong>Wiyanto Abu Hanif</strong><br>
+    &copy; 2026 - Media Edukasi Sekolah Dasar
+</footer>
+
+<script>
+    const cases = [
+        {
+            patient: "Rina",
+            story: "Dokter, saya sering merasa pegal di punggung. Bahu sebelah kanan saya terlihat lebih rendah dari yang kiri. Saya memang selalu memakai tas selempang yang berat hanya di satu bahu.",
+            options: ["Kifosis", "Skoliosis", "Lordosis", "Osteoporosis"],
+            correct: 1,
+            resep: "Gunakan tas ransel di kedua bahu agar beban seimbang, dan kurangi beban tas yang terlalu berat."
+        },
+        {
+            patient: "Andi",
+            story: "Saat jalan atau duduk, saya sering membusungkan dada terlalu ke depan sampai perut saya menonjol. Sekarang pinggang bawah saya sering sakit.",
+            options: ["Lordosis", "Kifosis", "Skoliosis", "Fisura"],
+            correct: 0,
+            resep: "Perbaiki posisi duduk dan berdiri agar tegak namun tetap rileks, jangan terlalu melengkungkan punggung ke depan."
+        },
+        {
+            patient: "Nenek Siti",
+            story: "Kemarin Nenek terpeleset pelan, tapi tulang pergelangan tangan langsung patah. Kata petugas rontgen, tulang Nenek sudah keropos dan rapuh.",
+            options: ["Rakitis", "Polio", "Osteoporosis", "Kram Otot"],
+            correct: 2,
+            resep: "Rajin mengonsumsi makanan tinggi kalsium dan vitamin D, serta olahraga ringan di pagi hari."
+        },
+        {
+            patient: "Doni",
+            story: "Tadi saya terlambat bertanding bola dan tidak pemanasan. Saat lari kencang, tiba-tiba otot betis saya mengeras dan sakit sekali sampai tidak bisa jalan.",
+            options: ["Fisura", "Kram Otot", "Skoliosis", "Lordosis"],
+            correct: 1,
+            resep: "Istirahatkan kaki, lakukan pijatan ringan, dan selalu ingat pemanasan sebelum berolahraga."
+        },
+        {
+            patient: "Rio",
+            story: "Saya jatuh dari sepeda. Lengan bengkak dan sakit. Tulang tidak menembus kulit, tapi di rontgen ada garis halus di tulang lengan saya.",
+            options: ["Fisura (Retak Tulang)", "Fraktura", "Osteoporosis", "Polio"],
+            correct: 0,
+            resep: "Lengan harus dibalut atau digips agar tidak bergerak sampai tulang menyambung kembali."
+        },
+        {
+            patient: "Rekam Medis Balita",
+            story: "Pasien mengalami demam tinggi saat balita. Kini otot kakinya menyusut dan lumpuh. Dulu pasien tidak mendapatkan imunisasi lengkap.",
+            options: ["Kifosis", "Rakitis", "Polio", "Osteoporosis"],
+            correct: 2,
+            resep: "Penyakit ini dicegah dengan memberikan imunisasi/vaksinasi lengkap saat bayi."
+        }
+    ];
+
+    let currentCaseIndex = 0;
+    let score = 0;
+
+    function startApp() {
+        document.getElementById('home-screen').classList.remove('active');
+        document.getElementById('quiz-screen').classList.add('active');
+        showCase();
+    }
+
+    function showCase() {
+        const currentCase = cases[currentCaseIndex];
+        document.getElementById('patient-title').innerText = "Pasien: " + currentCase.patient;
+        document.getElementById('patient-story').innerText = `"${currentCase.story}"`;
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        
+        currentCase.options.forEach((opt, index) => {
+            const button = document.createElement('button');
+            button.className = 'btn-option';
+            button.innerText = opt;
+            button.onclick = () => checkAnswer(index);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    function checkAnswer(selectedIndex) {
+        const currentCase = cases[currentCaseIndex];
+        const modal = document.getElementById('feedback-modal');
+        const title = document.getElementById('feedback-title');
+        const message = document.getElementById('feedback-message');
+        const resep = document.getElementById('feedback-resep');
+        const animationImg = document.getElementById('feedback-animation');
+
+        if (selectedIndex === currentCase.correct) {
+            score++;
+            
+            // Tampilkan gambar jempol jika jawaban benar
+            animationImg.style.display = 'inline-block';
+            
+            title.innerText = "✅ Benar!";
+            title.style.color = "var(--success)";
+            message.innerText = `Hebat! Diagnosa kamu tepat. Pasien ini memang mengalami ${currentCase.options[selectedIndex]}.`;
+        } else {
+            
+            // Sembunyikan gambar jempol jika jawaban salah
+            animationImg.style.display = 'none';
+            
+            title.innerText = "❌ Kurang Tepat";
+            title.style.color = "var(--error)";
+            message.innerText = `Bukan itu jawabannya. Diagnosa yang benar adalah ${currentCase.options[currentCase.correct]}.`;
+        }
+
+        resep.innerText = currentCase.resep;
+        modal.style.display = 'flex';
+    }
+
+    function nextQuestion() {
+        document.getElementById('feedback-modal').style.display = 'none';
+        currentCaseIndex++;
+        
+        if (currentCaseIndex < cases.length) {
+            showCase();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-screen').classList.remove('active');
+        document.getElementById('result-screen').classList.add('active');
+        document.getElementById('score-display').innerHTML = `
+            <p>Kamu berhasil mendiagnosa <strong>${score}</strong> dari <strong>${cases.length}</strong> pasien dengan benar.</p>
+        `;
+    }
+</script>
+
+</body>
+</html>
